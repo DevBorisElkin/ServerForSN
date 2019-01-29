@@ -32,24 +32,26 @@ public class ClientHandler {
                 try {
                     while (true) {
                         str = in.readUTF();
-                        if (str.startsWith("/auth")) { // /auth login72 pass72
-                            String[] tokens = str.split(" ");
-                            String newNick = Database.getNickByLoginAndPass(tokens[1], tokens[2]);
-                            if (newNick != null) {
-                                if (!server.isNickBusy(newNick)) {
-                                    sendMsg("/authok");
-                                    nick = newNick;
-                                    server.subscribe(this);
-                                    break;
-                                    //TODO: доделать авторизацию
-                                } else {
-                                    sendMsg("Учетная запись уже используется");
-                                }
-                            } else {
-                                sendMsg("Неверный логин/пароль");
-                            }
-                        }else if(str.startsWith("/check")) {
+                        if(str.startsWith("/check")) {
                             sendMsg("/online");
+                        }else if (str.startsWith("/auth")) { // /auth login72 pass72
+                                String[] tokens = str.split(" ");
+                                String newNick = Database.getNickByLoginAndPass(tokens[1], tokens[2]);
+                                if (newNick != null) {
+                                    if (!server.isNickBusy(newNick)) {
+                                        sendMsg("/auth_ok");
+                                        System.out.println("Пользователь "+newNick+" авторизовался.");
+                                        //
+                                        nick = newNick;
+                                        //break;
+                                        //TODO: доделать авторизацию
+                                    } else {
+                                        sendMsg("Учетная запись уже используется");
+                                    }
+                                } else {
+                                    sendMsg("Неверный логин/пароль");
+                                }
+
                         }else if(str.startsWith("/add_user")){
                             String[] tokens = str.split(" ");
                             Database.addUser(tokens[1],tokens[2],tokens[3]);
@@ -63,9 +65,14 @@ public class ClientHandler {
                     while (true) {
                         str = in.readUTF();
                         if (str.startsWith("/")) {
-                            if (str.equals("/end")) {
+                            if(str.startsWith("/check")) {
+                                sendMsg("/online");
+                            }else if (str.equals("/end")) {
                                 out.writeUTF("/serverclosed");
                                 break;
+                            }
+                            if(str.startsWith("/get_main_data")){
+
                             }
                             if (str.startsWith("/w ")) { // /w nick3 lsdfhldf sdkfjhsdf wkerhwr
                                 String[] tokens = str.split(" ", 3);
@@ -90,6 +97,9 @@ public class ClientHandler {
                 } catch (IOException e) {
                     //e.printStackTrace();
                 } finally {
+                    if(nick!=null){
+                        System.out.println("Пользователь "+nick+" отключился");
+                    }
                     System.out.println("Клиент отключился");
                     sendMsg("offline");
                     try {
