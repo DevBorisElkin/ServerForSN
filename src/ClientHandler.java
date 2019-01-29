@@ -1,4 +1,5 @@
 import database.Database;
+import database.UserData;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -39,11 +40,11 @@ public class ClientHandler {
                                 String newNick = Database.getNickByLoginAndPass(tokens[1], tokens[2]);
                                 if (newNick != null) {
                                     if (!server.isNickBusy(newNick)) {
-                                        sendMsg("/auth_ok");
+                                        sendMsg("/auth_ok "+newNick);
                                         System.out.println("Пользователь "+newNick+" авторизовался.");
                                         //
                                         nick = newNick;
-                                        //break;
+                                        break;
                                         //TODO: доделать авторизацию
                                     } else {
                                         sendMsg("Учетная запись уже используется");
@@ -71,8 +72,12 @@ public class ClientHandler {
                                 out.writeUTF("/serverclosed");
                                 break;
                             }
-                            if(str.startsWith("/get_main_data")){
-
+                            if(str.startsWith("/get_main_info")){
+                                String[] tokens = str.split(" ");
+                                List<String>data=Database.getCompleteData(tokens[1]);
+                                StringBuilder output= new StringBuilder("/compl_data");
+                                for(String e: data) output.append(e).append(" ");
+                                out.writeUTF(output.toString());
                             }
                             if (str.startsWith("/w ")) { // /w nick3 lsdfhldf sdkfjhsdf wkerhwr
                                 String[] tokens = str.split(" ", 3);
@@ -84,11 +89,14 @@ public class ClientHandler {
                                 blackList.add(tokens[1]);
                                 sendMsg("Вы добавили пользователя " + tokens[1] + " в черный список");
                             }
-//                            if(str.startsWith("/add_user")){  //add_user login pass nick
-//                                String[] tokens = str.split(" ");
-//                                Database.addUser(tokens[1],tokens[2],tokens[3]);
-//                                sendMsg("Пользователь добавлен");
-//                            }
+                            if(str.startsWith("/get_all_users")){
+                                List<UserData>list=Database.getAllUsersData();
+                                StringBuilder builder=new StringBuilder("/all_users_data@");
+                                for(UserData a:list){ builder.append(a.toStr()+"@"); }
+                                //builder.append(list.get(0).toStr()+"@");  // replace this line with line above
+                                sendMsg(builder.toString());
+                            }
+
                         } else {
                             server.broadcastMsg(this, nick + ": " + str);
                         }

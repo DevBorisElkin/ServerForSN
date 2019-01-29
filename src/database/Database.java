@@ -22,12 +22,12 @@ public class Database {
 
     public static void addUser(String login, String pass, String nick) {
         try {
-            String query = "INSERT INTO users (login, password, nickname, av_color, description) VALUES (?, ?, ?, ?, ?);";
+            String query = "INSERT INTO users (login, password, nickname, avatar, description) VALUES (?, ?, ?, ?, ?);";
             PreparedStatement ps = connection.prepareStatement(query);
             ps.setString(1, login);
             ps.setString(2, pass);
             ps.setString(3, nick);
-            ps.setInt(4, new Random().nextInt(10)+1);
+            ps.setInt(4, new Random().nextInt(15)+1);
             ps.setString(5,"-");
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -38,7 +38,7 @@ public class Database {
     public static List<String> getCompleteData(String nick){
         List<String> data = new ArrayList<>();
         try {
-            rs = stmt.executeQuery("SELECT id, login, password, nickname, av_color, description, status FROM users WHERE nickname = '" + nick + "'");
+            rs = stmt.executeQuery("SELECT id, login, password, nickname, avatar, description, status FROM users WHERE nickname = '" + nick + "'");
             while (rs.next()) {
                 String id=new StringBuilder().append(rs.getInt(1)).toString();    data.add(id);
                 String login = rs.getString(2);                                   data.add(login);
@@ -54,14 +54,36 @@ public class Database {
         return data;
     }
 
-    public static String getNickByLoginAndPass(String login, String pass) {
+    public static  List<UserData> getAllUsersData(){
+        List<UserData> users = new ArrayList<>();
         try {
-            rs = stmt.executeQuery("SELECT login, password FROM users WHERE login = '" + login + "'");
+            rs = stmt.executeQuery("SELECT id, login, password, nickname, avatar, description, status FROM users");
+            while (rs.next()) {
+                String id=new StringBuilder().append(rs.getInt(1)).toString();
+                String login = rs.getString(2);
+                String pass = rs.getString(3);
+                String nickname = rs.getString(4);
+                String color=rs.getString(5);
+                String description = rs.getString(6);
+                String newDescription=description.replaceAll(" ","&");
+                String status=rs.getString(7);
+                users.add(new UserData(id,login,pass,nickname,color,newDescription,status));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    return users;
+    }
+
+    public static String getNickByLoginAndPass(String login_, String pass) {
+        try {
+            rs = stmt.executeQuery("SELECT login, password, nickname FROM users WHERE login = '" + login_ + "'");
 
             while (rs.next()) {
-                String nick = rs.getString(1);
+                String login = rs.getString(1);
                 String dbPass = rs.getString(2);
-                if (pass.equals(dbPass)) {
+                String nick=rs.getString(3);
+                if (pass.equals(dbPass)&login.equals(login_)) {
                     return nick;
                 }
             }
