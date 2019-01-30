@@ -7,6 +7,7 @@ import java.util.Vector;
 
 public class Server {
     private Vector<ClientHandler> clients;
+    SubThread subThread = new SubThread(this);
 
     public Server() {
         clients = new Vector<>();
@@ -15,6 +16,7 @@ public class Server {
         try {
             Database.connect();
             server = new ServerSocket(8189);
+            subThread.start();
             System.out.println("Сервер запущен. Ожидаем клиентов...");
             while (true) {
                 socket = server.accept();
@@ -75,6 +77,12 @@ public class Server {
         String out = sb.toString();
         for (ClientHandler o : clients) {
             o.sendMsg(out);
+        }
+    }
+
+    public void sendUpdatedData(){
+        for (ClientHandler o : clients) {
+            o.sendAllData();
         }
     }
 

@@ -42,10 +42,9 @@ public class ClientHandler {
                                     if (!server.isNickBusy(newNick)) {
                                         sendMsg("/auth_ok "+newNick);
                                         System.out.println("Пользователь "+newNick+" авторизовался.");
-                                        //
                                         nick = newNick;
                                         break;
-                                        //TODO: доделать авторизацию
+
                                     } else {
                                         sendMsg("Учетная запись уже используется");
                                     }
@@ -96,15 +95,20 @@ public class ClientHandler {
                                 //builder.append(list.get(0).toStr()+"@");  // replace this line with line above
                                 sendMsg(builder.toString());
                             }
+                            if(str.startsWith("/online_push ")){
+                                String[] tokens = str.split(" ");
+                                Database.updateUserStatus(tokens[1], "online");
+                            }
 
                         } else {
                             server.broadcastMsg(this, nick + ": " + str);
                         }
-                        System.out.println("Client: " + str);
+                        //System.out.println("Client: " + str);
                     }
                 } catch (IOException e) {
                     //e.printStackTrace();
                 } finally {
+                    Database.updateUserStatus(nick, "offline");
                     if(nick!=null){
                         System.out.println("Пользователь "+nick+" отключился");
                     }
@@ -144,4 +148,13 @@ public class ClientHandler {
             //e.printStackTrace();
         }
     }
+
+    public void sendAllData(){
+        List<UserData>list=Database.getAllUsersData();
+        StringBuilder builder=new StringBuilder("/all_users_data@");
+        for(UserData a:list){ builder.append(a.toStr()+"@"); }
+        sendMsg(builder.toString());
+    }
+
+
 }

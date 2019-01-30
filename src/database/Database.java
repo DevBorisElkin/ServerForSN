@@ -22,7 +22,7 @@ public class Database {
 
     public static void addUser(String login, String pass, String nick) {
         try {
-            String query = "INSERT INTO users (login, password, nickname, avatar, description, status) VALUES (?, ?, ?, ?, ?, ?);";
+            String query = "INSERT INTO users (login, password, nickname, avatar, description, status, last_online) VALUES (?, ?, ?, ?, ?, ?, ?);";
             PreparedStatement ps = connection.prepareStatement(query);
             ps.setString(1, login);
             ps.setString(2, pass);
@@ -30,6 +30,7 @@ public class Database {
             ps.setInt(4, new Random().nextInt(15)+1);
             ps.setString(5,"-");
             ps.setString(6,"offline");
+            ps.setString(7,""+System.currentTimeMillis());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -39,7 +40,7 @@ public class Database {
     public static List<String> getCompleteData(String nick){
         List<String> data = new ArrayList<>();
         try {
-            rs = stmt.executeQuery("SELECT id, login, password, nickname, avatar, description, status FROM users WHERE nickname = '" + nick + "'");
+            rs = stmt.executeQuery("SELECT id, login, password, nickname, avatar, description, status, last_online FROM users WHERE nickname = '" + nick + "'");
             while (rs.next()) {
                 String id=new StringBuilder().append(rs.getInt(1)).toString();    data.add(id);
                 String login = rs.getString(2);                                   data.add(login);
@@ -48,6 +49,7 @@ public class Database {
                 String color=rs.getString(5);                                     data.add(color);
                 String description = rs.getString(6);                             data.add(description);
                 String status=rs.getString(7);                                    data.add(status);
+                String last_online=TimeManager.calcTimeSince(Long.parseLong(rs.getString(8)),System.currentTimeMillis());  data.add(last_online);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -58,7 +60,7 @@ public class Database {
     public static  List<UserData> getAllUsersData(){
         List<UserData> users = new ArrayList<>();
         try {
-            rs = stmt.executeQuery("SELECT id, login, password, nickname, avatar, description, status FROM users");
+            rs = stmt.executeQuery("SELECT id, login, password, nickname, avatar, description, status, last_online FROM users");
             while (rs.next()) {
                 String id=new StringBuilder().append(rs.getInt(1)).toString();
                 String login = rs.getString(2);
@@ -68,7 +70,8 @@ public class Database {
                 String description = rs.getString(6);
                 String newDescription=description.replaceAll(" ","&");
                 String status=rs.getString(7);
-                users.add(new UserData(id,login,pass,nickname,color,newDescription,status));
+                String last_online=TimeManager.calcTimeSince(Long.parseLong(rs.getString(8)),System.currentTimeMillis());
+                users.add(new UserData(id,login,pass,nickname,color,newDescription,status, last_online));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -94,6 +97,57 @@ public class Database {
         return null;
     }
 
+    public static void updateConnectionTime(String nick){       //TODO: доделать!!!
+        try {
+            rs = stmt.executeQuery("SELECT status, last_online FROM users WHERE nickname = '" +nick + "'");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //public static void checkOnline(String nick){
+    //    try { rs = stmt.executeQuery("SELECT status, last_online FROM users WHERE nickname = '" +nick + "'");
+    //        String status=rs.getString(1);
+    //        String last_online=rs.getString(2);
+    //        long minuteDifference=TimeManager.getSecDifference(Long.parseLong(last_online),System.currentTimeMillis());
+    //        if (minuteDifference>=2){
+    //            rs=stmt.executeQuery("UPDATE users SET status = 'offline' WHERE nickname = '"+nick+"'");
+    //        }
+    //
+    //    } catch (SQLException e) {
+    //        e.printStackTrace();
+    //    }
+    //}
+
+    public static void checkAllOnline(){
+        String nick, last_online;
+        try {
+            rs = stmt.executeQuery("SELECT nickname, last_online FROM users WHERE status = 'online'");
+            while (rs.next()) {
+                nick=rs.getString(1);
+                last_online=rs.getString(2);
+                long minuteDifference=TimeManager.getSecDifference(Long.parseLong(last_online),System.currentTimeMillis());
+                if (minuteDifference>=2){
+                    PreparedStatement st = connection.prepareStatement("UPDATE users SET status = 'offline' WHERE nickname = '"+nick+"'");
+                    st.executeUpdate();
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateUserStatus(String nick, String online_offline_str){
+        try {
+            PreparedStatement st = connection.prepareStatement("UPDATE users SET status = ?, last_online = ? WHERE nickname = '"+nick+"'");
+            st.setString(1,online_offline_str);
+            st.setString(2,""+System.currentTimeMillis());
+            st.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void disconnect() {
         try {
             connection.close();
@@ -101,5 +155,7 @@ public class Database {
             e.printStackTrace();
         }
     }
+
+
 }
 

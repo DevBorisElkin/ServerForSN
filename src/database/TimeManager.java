@@ -37,30 +37,36 @@ public class TimeManager {
         if(years>0)minutes-=(years*525960);
 
         StringBuilder time = new StringBuilder("time");
-        if(years>0)time.append("@years:"+years);
-        if(months>0)time.append("@months:"+months);
-        if(days>0)time.append("@days:"+days);
-        if(hours>0)time.append("@hours:"+hours);
-        if(minutes>=0)time.append("@minutes:"+minutes);
+        if(years>0)time.append("$years:"+years);
+        if(months>0)time.append("$months:"+months);
+        if(days>0)time.append("$days:"+days);
+        if(hours>0)time.append("$hours:"+hours);
+        if(minutes>=0)time.append("$minutes:"+minutes);
 
         return time.toString();
     }
-    @Deprecated
+
     public static String CheckCalculation(long last, long now){
         long current=now-last;
         StringBuilder time = new StringBuilder("time");
-        if(calcYears(current)>0)time.append("@years:"+calcYears(current));
-        if(calcMonths(current)>0)time.append("@months:"+calcMonths(current));
-        if(calcWeeks(current)>0)time.append("@weeks:"+calcWeeks(current));
-        if(calcDays(current)>0)time.append("@days:"+calcDays(current));
-        if(calcHours(current)>0)time.append("@hours:"+calcHours(current));
-        if(calcMinutes(current)>=0)time.append("@minutes:"+calcMinutes(current));
+        if(calcYears(current)>0)time.append("$years:"+calcYears(current));
+        if(calcMonths(current)>0)time.append("$months:"+calcMonths(current));
+        if(calcWeeks(current)>0)time.append("$weeks:"+calcWeeks(current));
+        if(calcDays(current)>0)time.append("$days:"+calcDays(current));
+        if(calcHours(current)>0)time.append("$hours:"+calcHours(current));
+        if(calcMinutes(current)>=0)time.append("$minutes:"+calcMinutes(current));
         return time.toString();
     }
-
     /*  Example
         System.out.println(calcTimeSince(1548850025221L,System.currentTimeMillis()+1420000L)+"\n");
         System.out.println("----------OLD CALCULATION------------");
         System.out.println(CheckCalculation(1548850025221L,System.currentTimeMillis()+1420000L));
      */
+
+    public static long getSecDifference(long old, long now){
+        String tmp=CheckCalculation(old, now);
+        int indexLast=tmp.lastIndexOf(":");
+        String prep=tmp.substring(indexLast+1,tmp.length());
+        return Long.parseLong(prep);
+    }
 }
