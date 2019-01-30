@@ -22,13 +22,14 @@ public class Database {
 
     public static void addUser(String login, String pass, String nick) {
         try {
-            String query = "INSERT INTO users (login, password, nickname, avatar, description) VALUES (?, ?, ?, ?, ?);";
+            String query = "INSERT INTO users (login, password, nickname, avatar, description, status) VALUES (?, ?, ?, ?, ?, ?);";
             PreparedStatement ps = connection.prepareStatement(query);
             ps.setString(1, login);
             ps.setString(2, pass);
             ps.setString(3, nick);
             ps.setInt(4, new Random().nextInt(15)+1);
             ps.setString(5,"-");
+            ps.setString(6,"offline");
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
