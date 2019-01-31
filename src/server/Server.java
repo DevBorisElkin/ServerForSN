@@ -1,3 +1,5 @@
+package server;
+
 import database.Database;
 
 import java.io.IOException;

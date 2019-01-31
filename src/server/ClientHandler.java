@@ -1,5 +1,7 @@
+package server;
+
 import database.Database;
-import database.UserData;
+import support.UserData;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

@@ -1,5 +1,8 @@
 package database;
 
+import support.TimeManager;
+import support.UserData;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +52,7 @@ public class Database {
                 String color=rs.getString(5);                                     data.add(color);
                 String description = rs.getString(6);                             data.add(description);
                 String status=rs.getString(7);                                    data.add(status);
-                String last_online=TimeManager.calcTimeSince(Long.parseLong(rs.getString(8)),System.currentTimeMillis());  data.add(last_online);
+                String last_online= TimeManager.calcTimeSince(Long.parseLong(rs.getString(8)),System.currentTimeMillis());  data.add(last_online);
             }
         } catch (SQLException e) {
             e.printStackTrace();

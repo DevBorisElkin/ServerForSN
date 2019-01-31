@@ -1,3 +1,5 @@
+package server;
+
 import database.Database;
 
 public class SubThread implements Runnable{
