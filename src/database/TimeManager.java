@@ -1,5 +1,7 @@
 package database;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class TimeManager {
@@ -68,5 +70,41 @@ public class TimeManager {
         int indexLast=tmp.lastIndexOf(":");
         String prep=tmp.substring(indexLast+1,tmp.length());
         return Long.parseLong(prep);
+    }
+
+    public static String parseString(String input){
+        String token=""; String data = "";
+        StringBuilder builder = new StringBuilder("was online");
+        ArrayList<Integer> listDollars = new ArrayList<Integer>();
+        char character = '$';
+        for(int i = 0; i < input.length(); i++){
+            if(input.charAt(i) == character){
+                listDollars.add(i);
+            }
+        }
+        ArrayList<Integer> listColons = new ArrayList<Integer>();
+        character = ':';
+        for(int i = 0; i < input.length(); i++){
+            if(input.charAt(i) == character){
+                listColons.add(i);
+            }
+        }
+
+        for(int i=0; i<listColons.size();i++){
+            token=input.substring(listDollars.get(i)+1,listColons.get(i));
+            if(i+1>=listColons.size()){
+                data=input.substring(listColons.get(i)+1,input.length());
+            }else{
+                data=input.substring(listColons.get(i)+1,listDollars.get(i+1));
+            }
+            if(Integer.parseInt(data)==1){
+                token=token.substring(0,token.length()-1);
+            }
+            builder.append(" "+data+" "+token);
+        }
+        builder.append(" ago");
+/**   >>>time$hours:22$minutes:40
+ *    >>>was online 22 hours 40 minutes ago   **/
+        return builder.toString();
     }
 }
