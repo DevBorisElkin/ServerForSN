@@ -43,6 +43,7 @@ public class ClientHandler {
                                         sendMsg("/auth_ok "+newNick);
                                         System.out.println("Пользователь "+newNick+" авторизовался.");
                                         nick = newNick;
+                                        server.subscribe(this);
                                         break;
 
                                     } else {
