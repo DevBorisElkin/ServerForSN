@@ -38,12 +38,11 @@ public class TimeManager {
         if(years>0)minutes-=(years*525960);
 
         StringBuilder time = new StringBuilder("time");
-        if(years>0)time.append("$years:"+years);
-        if(months>0)time.append("$months:"+months);
-        if(days>0)time.append("$days:"+days);
-        if(hours>0)time.append("$hours:"+hours);
-        if(minutes>=0)time.append("$minutes:"+minutes);
-
+        /*if(years>0)time.append("$yrs:"+years);        */                   if(years>0)time.append("$years:"+years);
+        /*if(months>0)time.append("$mnths:"+months);    */                   if(months>0)time.append("$months:"+months);
+        /*if(days>0)time.append("$days:"+days);         */                   if(days>0)time.append("$days:"+days);
+        /*if(hours>0)time.append("$hrs:"+hours);        */                   if(hours>0)time.append("$hours:"+hours);
+        /*if(minutes>=0)time.append("$mins:"+minutes);  */                   if(minutes>=0)time.append("$minutes:"+minutes);
         return time.toString();
     }
 
@@ -72,36 +71,40 @@ public class TimeManager {
     }
 
     public static String parseString(String input){
-        String token=""; String data = "";
-        StringBuilder builder = new StringBuilder("was online");
-        ArrayList<Integer> listDollars = new ArrayList<Integer>();
-        char character = '$';
-        for(int i = 0; i < input.length(); i++){
-            if(input.charAt(i) == character){
-                listDollars.add(i);
+        StringBuilder builder = new StringBuilder("");
+            String token=""; String data = "";
+            builder.append("was online");
+            ArrayList<Integer> listDollars = new ArrayList<Integer>();
+            char character = '$';
+            for(int i = 0; i < input.length(); i++){
+                if(input.charAt(i) == character){
+                    listDollars.add(i);
+                }
             }
-        }
-        ArrayList<Integer> listColons = new ArrayList<Integer>();
-        character = ':';
-        for(int i = 0; i < input.length(); i++){
-            if(input.charAt(i) == character){
-                listColons.add(i);
+            ArrayList<Integer> listColons = new ArrayList<Integer>();
+            character = ':';
+            for(int i = 0; i < input.length(); i++){
+                if(input.charAt(i) == character){
+                    listColons.add(i);
+                }
             }
-        }
 
-        for(int i=0; i<listColons.size();i++){
-            token=input.substring(listDollars.get(i)+1,listColons.get(i));
-            if(i+1>=listColons.size()){
-                data=input.substring(listColons.get(i)+1,input.length());
-            }else{
-                data=input.substring(listColons.get(i)+1,listDollars.get(i+1));
+            for(int i=0; i<listColons.size();i++){
+                token=input.substring(listDollars.get(i)+1,listColons.get(i));
+                if(i+1>=listColons.size()){
+                    data=input.substring(listColons.get(i)+1,input.length());
+                }else{
+                    data=input.substring(listColons.get(i)+1,listDollars.get(i+1));
+                }
+                if(Integer.parseInt(data)==1){
+                    token=token.substring(0,token.length()-1);
+                }
+                builder.append(" "+data+" "+token);
             }
-            if(Integer.parseInt(data)==1){
-                token=token.substring(0,token.length()-1);
-            }
-            builder.append(" "+data+" "+token);
+            builder.append(" ago");
+        if(builder.toString().equals("was online 0 minutes ago")){
+            builder=new StringBuilder("was just online");
         }
-        builder.append(" ago");
 /**   >>>time$hours:22$minutes:40
  *    >>>was online 22 hours 40 minutes ago   **/
         return builder.toString();
