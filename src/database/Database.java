@@ -100,28 +100,6 @@ public class Database {
         return null;
     }
 
-    public static void updateConnectionTime(String nick){       //TODO: доделать!!!
-        try {
-            rs = stmt.executeQuery("SELECT status, last_online FROM users WHERE nickname = '" +nick + "'");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    //public static void checkOnline(String nick){
-    //    try { rs = stmt.executeQuery("SELECT status, last_online FROM users WHERE nickname = '" +nick + "'");
-    //        String status=rs.getString(1);
-    //        String last_online=rs.getString(2);
-    //        long minuteDifference=TimeManager.getSecDifference(Long.parseLong(last_online),System.currentTimeMillis());
-    //        if (minuteDifference>=2){
-    //            rs=stmt.executeQuery("UPDATE users SET status = 'offline' WHERE nickname = '"+nick+"'");
-    //        }
-    //
-    //    } catch (SQLException e) {
-    //        e.printStackTrace();
-    //    }
-    //}
-
     public static void checkAllOnline(){
         String nick, last_online;
         try {
