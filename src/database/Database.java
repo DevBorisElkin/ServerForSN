@@ -10,14 +10,15 @@ import java.util.Random;
 
 public class Database {
     private static Connection connection;
-    private static Statement stmt;
-    private static ResultSet rs;
+    private static Statement stmt, stmt2;
+    private static ResultSet rs, rs2;
 
     public static void connect() {
         try {
             Class.forName("org.sqlite.JDBC");
             connection = DriverManager.getConnection("jdbc:sqlite:main.db");
             stmt = connection.createStatement();
+            stmt2 = connection.createStatement();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -43,16 +44,21 @@ public class Database {
     public static List<String> getCompleteData(String nick){
         List<String> data = new ArrayList<>();
         try {
-            rs = stmt.executeQuery("SELECT id, login, password, nickname, avatar, description, status, last_online FROM users WHERE nickname = '" + nick + "'");
+            rs = stmt.executeQuery("SELECT id, login, password, nickname, avatar, description, status, last_online, messages, painted, joined, paint_delay FROM users WHERE nickname = '" + nick + "'");
             while (rs.next()) {
                 String id=new StringBuilder().append(rs.getInt(1)).toString();    data.add(id);
                 String login = rs.getString(2);                                   data.add(login);
                 String pass = rs.getString(3);                                    data.add(pass);
                 String nickname = rs.getString(4);                                data.add(nickname);
                 String color=rs.getString(5);                                     data.add(color);
-                String description = rs.getString(6);                             data.add(description);
+                String description = rs.getString(6);
+                String newDescription=description.replaceAll(" ","&");      data.add(newDescription);
                 String status=rs.getString(7);                                    data.add(status);
                 String last_online= TimeManager.calcTimeSince(Long.parseLong(rs.getString(8)),System.currentTimeMillis());  data.add(last_online);
+                String messages = rs.getString(9);  data.add(messages);
+                String painted = rs.getString(10);  data.add(painted);
+                String joined = rs.getString(11);   data.add(joined);
+                String paint_delay = rs.getString(12);  data.add(paint_delay);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -63,7 +69,7 @@ public class Database {
     public static  List<UserData> getAllUsersData(){
         List<UserData> users = new ArrayList<>();
         try {
-            rs = stmt.executeQuery("SELECT id, login, password, nickname, avatar, description, status, last_online FROM users");
+            rs = stmt.executeQuery("SELECT id, login, password, nickname, avatar, description, status, last_online, messages, painted, joined, paint_delay FROM users");
             while (rs.next()) {
                 String id=new StringBuilder().append(rs.getInt(1)).toString();
                 String login = rs.getString(2);
@@ -74,7 +80,11 @@ public class Database {
                 String newDescription=description.replaceAll(" ","&");
                 String status=rs.getString(7);
                 String last_online=TimeManager.calcTimeSince(Long.parseLong(rs.getString(8)),System.currentTimeMillis());
-                users.add(new UserData(id,login,pass,nickname,color,newDescription,status, last_online));
+                String messages = rs.getString(9);
+                String painted = rs.getString(10);
+                String joined = rs.getString(11);
+                String paint_delay = rs.getString(12);
+                users.add(new UserData(id,login,pass,nickname,color,newDescription,status, last_online, messages, painted, joined, paint_delay));
             }
         } catch (SQLException e) {
             e.printStackTrace();
