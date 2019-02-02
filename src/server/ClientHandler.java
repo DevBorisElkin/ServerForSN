@@ -46,6 +46,7 @@ public class ClientHandler {
                                         System.out.println("Пользователь "+newNick+" авторизовался.");
                                         nick = newNick;
                                         server.subscribe(this);
+                                        Database.updateUserStatus(newNick,"online");
                                         break;
 
                                     } else {
@@ -101,6 +102,10 @@ public class ClientHandler {
                             if(str.startsWith("/online_push ")){
                                 String[] tokens = str.split(" ");
                                 Database.updateUserStatus(tokens[1], "online");
+                            }
+                            if(str.startsWith("/update_user ")){
+                                String[] tokens = str.split(" ");
+                                Database.updateUserData(tokens[1],tokens[2]);
                             }
 
                         } else {

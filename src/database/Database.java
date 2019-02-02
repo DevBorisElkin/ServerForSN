@@ -139,6 +139,16 @@ public class Database {
         }
     }
 
+    public static void updateUserData(String nick, String description){
+        try {
+            PreparedStatement st = connection.prepareStatement("UPDATE users SET description = ? WHERE nickname = '"+nick+"'");
+            st.setString(1, description);
+            st.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void disconnect() {
         try {
             connection.close();
