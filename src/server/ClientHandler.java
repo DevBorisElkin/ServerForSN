@@ -53,7 +53,7 @@ public class ClientHandler {
                                         sendMsg("Учетная запись уже используется");
                                     }
                                 } else {
-                                    sendMsg("Неверный логин/пароль");
+                                    sendMsg("/wrong login/password");
                                 }
 
                         }else if(str.startsWith("/add_user")){
