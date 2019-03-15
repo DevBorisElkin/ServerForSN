@@ -1,6 +1,7 @@
 package server;
 
 import database.Database;
+import support.Message;
 import support.UserData;
 
 import java.io.DataInputStream;
@@ -164,5 +165,28 @@ public class ClientHandler {
         sendMsg(builder.toString());
     }
 
+    public void sendMessages(){
+        List<Message>list=Database.getAllMessages();
+        StringBuilder builder = new StringBuilder("/all_messages");
+        for(Message a:list){builder.append(a.toString()); }
+        sendMsg(builder.toString());
+    }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

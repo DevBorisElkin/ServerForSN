@@ -1,5 +1,8 @@
 package support;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -109,4 +112,18 @@ public class TimeManager {
  *    >>>was online 22 hours 40 minutes ago   **/
         return builder.toString();
     }
+
+    public static String getDate(long millis){
+        Date date = new Date(millis);
+        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        return (formatter.format(date));
+    }
+
+    public static String getDateWithTime(long millis){
+           DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS");
+           Date date = new Date(millis);
+           return dateFormat.format(date);
+    }
+
+
 }

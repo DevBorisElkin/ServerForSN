@@ -1,5 +1,6 @@
 package database;
 
+import support.Message;
 import support.TimeManager;
 import support.UserData;
 
@@ -149,6 +150,24 @@ public class Database {
         }
     }
 
+    public static List<Message> getAllMessages(){
+        List<Message>list = new ArrayList<>();
+        try {
+            rs = stmt.executeQuery("SELECT id_number, nickname, date_send, message FROM messages");
+
+            while (rs.next()) {
+                String id_number = rs.getInt(1)+"";
+                String nickname = rs.getString(2);
+                String date_send=rs.getString(3);
+                String message=rs.getString(4);
+                list.add(new Message(id_number, nickname,date_send, message));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public static void disconnect() {
         try {
             connection.close();
@@ -156,6 +175,8 @@ public class Database {
             e.printStackTrace();
         }
     }
+
+
 
 
 }

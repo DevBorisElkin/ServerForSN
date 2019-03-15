@@ -85,6 +85,7 @@ public class Server {
     public void sendUpdatedData(){
         for (ClientHandler o : clients) {
             o.sendAllData();
+            o.sendMessages();
         }
     }
 
