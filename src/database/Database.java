@@ -27,7 +27,7 @@ public class Database {
 
     public static void addUser(String login, String pass, String nick) {
         try {
-            String query = "INSERT INTO users (login, password, nickname, avatar, description, status, last_online) VALUES (?, ?, ?, ?, ?, ?, ?);";
+            String query = "INSERT INTO users (login, password, nickname, avatar, description, status, last_online, messages, painted, joined, paint_delay) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
             PreparedStatement ps = connection.prepareStatement(query);
             ps.setString(1, login);
             ps.setString(2, pass);
@@ -36,6 +36,10 @@ public class Database {
             ps.setString(5,"-");
             ps.setString(6,"offline");
             ps.setString(7,""+System.currentTimeMillis());
+            ps.setString(8,"0");
+            ps.setString(9,"0");
+            ps.setString(10,TimeManager.getDate(System.currentTimeMillis())+"");
+            ps.setString(11,"7");
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

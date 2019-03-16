@@ -60,7 +60,7 @@ public class ClientHandler {
                         }else if(str.startsWith("/add_user")){
                             String[] tokens = str.split(" ");
                             Database.addUser(tokens[1],tokens[2],tokens[3]);
-                            sendMsg("user_was_added");
+                            sendMsg("user_was_added"+" "+tokens[1]+" "+tokens[2]+" "+tokens[3]);
                             break;
                             //TODO: доделать регистрацию
                         }else{

@@ -44,8 +44,11 @@ public class TimeManager {
         /*if(years>0)time.append("$yrs:"+years);        */                   if(years>0)time.append("$years:"+years);
         /*if(months>0)time.append("$mnths:"+months);    */                   if(months>0)time.append("$months:"+months);
         /*if(days>0)time.append("$days:"+days);         */                   if(days>0)time.append("$days:"+days);
-        /*if(hours>0)time.append("$hrs:"+hours);        */                   if(hours>0)time.append("$hours:"+hours);
-        /*if(minutes>=0)time.append("$mins:"+minutes);  */                   if(minutes>=0)time.append("$minutes:"+minutes);
+        /*if(hours>0)time.append("$hrs:"+hours);        */
+        /*if(minutes>=0)time.append("$mins:"+minutes);  */
+        if(hours>0){
+            time.append("$hours:"+hours);
+        }else if(minutes>=0&&minutes<61)time.append("$minutes:"+minutes);
         return time.toString();
     }
 
